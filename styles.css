@@ -332,3 +332,7 @@ select{ cursor:pointer; }
   justify-content:flex-end;
   flex-wrap:wrap;
 }
+/* FIX: respect the HTML hidden attribute */
+.modalBackdrop[hidden]{
+    display: none !important;
+}
