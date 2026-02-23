@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pump Chart Vault</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brandMark">P</div>
+      <div class="brandText">
+        <div class="brandTitle">Pump Chart Vault</div>
+        <div class="brandSub">Songs · Charts · Notes · Title Tracker</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <button class="navBtn" data-route="home">首页</button>
+      <button class="navBtn" data-route="library">曲库</button>
+      <button class="navBtn" data-route="tracker">称号追踪器</button>
+      <button class="navBtn" data-route="importExport">导入导出</button>
+      <button class="navBtn" data-route="settings">设置</button>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- HOME -->
+    <section class="page" id="page-home">
+      <div class="card">
+        <div class="cardTitleRow">
+          <div class="cardTitle">搜索</div>
+          <div class="pill">支持中文/英文/曲师/分类/配置</div>
+        </div>
+
+        <div class="row">
+          <input id="homeSearch" class="input" placeholder="搜歌名 / 曲师 / 分类 / 配置 / 备注关键词…" />
+          <button id="btnSearch" class="btn primary">搜索</button>
+          <button id="btnLucky" class="btn">手气不错</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="grid2">
+          <div>
+            <div class="fieldLabel">筛选：等级范围（例如 20～26）</div>
+            <div class="row">
+              <input id="fLevelMin" class="input small" placeholder="min" inputmode="numeric" />
+              <input id="fLevelMax" class="input small" placeholder="max" inputmode="numeric" />
+            </div>
+
+            <div class="fieldLabel">筛选：BPM 范围</div>
+            <div class="row">
+              <input id="fBpmMin" class="input small" placeholder="min" inputmode="numeric" />
+              <input id="fBpmMax" class="input small" placeholder="max" inputmode="numeric" />
+            </div>
+
+            <div class="fieldLabel">筛选：难度</div>
+            <select id="fDiff" class="input">
+              <option value="">不限</option>
+              <option value="S">Single (S)</option>
+              <option value="D">Double (D)</option>
+              <option value="SP">SP</option>
+              <option value="DP">DP</option>
+              <option value="COOP">COOP</option>
+              <option value="OTHER">OTHER</option>
+            </select>
+          </div>
+
+          <div>
+            <div class="fieldLabel">筛选：难度分布</div>
+            <select id="fDist" class="input">
+              <option value="">不限</option>
+              <option>最上</option>
+              <option>上</option>
+              <option>中上</option>
+              <option>中</option>
+              <option>中下</option>
+              <option>下</option>
+              <option>最下</option>
+              <option>特殊</option>
+            </select>
+
+            <div class="fieldLabel">筛选：谱面配置分类</div>
+            <input id="fConfig" class="input" placeholder="例如：卡点 / 跑步 / 交互 / 变速…" />
+
+            <div class="fieldLabel">筛选：分类</div>
+            <input id="fCategory" class="input" placeholder="例如：J-Music / K-POP / Original…" />
+          </div>
+        </div>
+
+        <div class="hint">
+          手气不错：会按你上面的筛选条件，把匹配到的所有内容洗牌展示，并随机点开其中一个谱面。
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardTitleRow">
+          <div class="cardTitle">结果</div>
+          <div class="pill" id="homeResultMeta">0 条</div>
+        </div>
+        <div id="homeResults" class="list"></div>
+      </div>
+    </section>
+
+    <!-- LIBRARY -->
+    <section class="page" id="page-library">
+      <div class="card">
+        <div class="cardTitleRow">
+          <div class="cardTitle">曲库</div>
+          <div class="row">
+            <button id="btnAddSong" class="btn primary">新增歌曲</button>
+            <button id="btnAddChart" class="btn">给某首歌新增谱面</button>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="row">
+          <input id="libSearch" class="input" placeholder="快速过滤（歌名/曲师/分类/配置/备注）" />
+          <select id="libSort" class="input">
+            <option value="updated_desc">按最近更新</option>
+            <option value="name_asc">按歌名 A→Z</option>
+            <option value="bpm_asc">按 BPM ↑</option>
+            <option value="bpm_desc">按 BPM ↓</option>
+          </select>
+        </div>
+        <div class="divider"></div>
+        <div id="libraryList" class="list"></div>
+      </div>
+    </section>
+
+    <!-- TRACKER -->
+    <section class="page" id="page-tracker">
+      <div class="card">
+        <div class="cardTitleRow">
+          <div class="cardTitle">称号追踪器</div>
+          <div class="pill">Advanced Lv.1～Lv.10 · Expert Lv.1～Lv.10</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="grid2">
+          <div class="panel">
+            <div class="panelTitle">你的“已带血”谱面统计</div>
+            <div class="kv">
+              <div class="k">已带血谱面数量</div><div class="v" id="bloodCount">0</div>
+              <div class="k">已带血总分（Points）</div><div class="v" id="bloodSum">0</div>
+              <div class="k">平均每张带血得分</div><div class="v" id="bloodAvg">0</div>
+            </div>
+            <div class="hint">
+              说明：当你在谱面详情页勾选“已带血”，会弹窗选择该谱面的“等级数字（10～28）”与“Rank（A～SSS+）”，系统用你给的那张表自动算 Points，并用于称号估算。
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panelTitle">快速入口</div>
+            <div class="row">
+              <button id="btnOpenBloodList" class="btn primary">查看已带血列表</button>
+              <button id="btnRecalcTracker" class="btn">重新计算</button>
+            </div>
+            <div class="divider"></div>
+            <div class="hint">
+              你也可以把“带血”当作你自己的勾选标准，比如“FC/UC/爆个血线”等。这里做的是通用统计与称号需求估算。
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardTitleRow">
+          <div class="cardTitle">称号需求估算</div>
+          <div class="pill">保留两位小数</div>
+        </div>
+        <div class="divider"></div>
+        <div id="trackerTable" class="trackerTable"></div>
+      </div>
+
+      <div class="card">
+        <div class="cardTitleRow">
+          <div class="cardTitle">已带血谱面</div>
+          <div class="pill" id="bloodMeta">0 条</div>
+        </div>
+        <div class="divider"></div>
+        <div id="bloodList" class="list"></div>
+      </div>
+    </section>
+
+    <!-- IMPORT / EXPORT -->
+    <section class="page" id="page-importExport">
+      <div class="card">
+        <div class="cardTitleRow">
+          <div class="cardTitle">导入导出</div>
+          <div class="pill">跨设备继承数据</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="grid2">
+          <div class="panel">
+            <div class="panelTitle">导出</div>
+            <div class="row">
+              <button id="btnExportJson" class="btn primary">导出 JSON 文件</button>
+              <button id="btnCopyJson" class="btn">复制 JSON 到剪贴板</button>
+            </div>
+            <div class="hint">建议用 JSON，最稳，字段全保留。</div>
+          </div>
+
+          <div class="panel">
+            <div class="panelTitle">导入</div>
+            <div class="row">
+              <input id="importFile" type="file" accept="application/json" class="input file" />
+              <button id="btnImportFile" class="btn primary">导入文件</button>
+            </div>
+            <div class="divider"></div>
+            <textarea id="importText" class="textarea" placeholder="或粘贴 JSON 到这里"></textarea>
+            <div class="row">
+              <button id="btnImportText" class="btn primary">导入粘贴内容</button>
+              <button id="btnResetAll" class="btn danger">清空所有数据</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="panel">
+          <div class="panelTitle">外接曲绘提取工具</div>
+          <div class="hint">
+            你要求外接 https://www.youtubethumbnaildownloader.com/。这里提供两个方式：
+            1) 一键打开外部网站；
+            2) 本站直接从 YouTube 链接推导缩略图 URL（通常够用，速度更快）。
+          </div>
+
+          <div class="row">
+            <input id="ytUrl" class="input" placeholder="粘贴 YouTube 链接（用于提取曲绘/缩略图）" />
+            <button id="btnOpenThumbSite" class="btn">打开外部提取网站</button>
+          </div>
+          <div class="row">
+            <button id="btnDeriveThumb" class="btn primary">本站推导缩略图</button>
+            <input id="thumbOut" class="input" placeholder="缩略图 URL 输出" readonly />
+            <button id="btnCopyThumb" class="btn">复制</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="page" id="page-settings">
+      <div class="card">
+        <div class="cardTitleRow">
+          <div class="cardTitle">设置</div>
+          <div class="pill">本地存储 · 不联网</div>
+        </div>
+        <div class="divider"></div>
+
+        <div class="grid2">
+          <div class="panel">
+            <div class="panelTitle">显示选项</div>
+            <label class="checkRow">
+              <input id="setShowArtwork" type="checkbox" />
+              <span>列表显示曲绘缩略图</span>
+            </label>
+            <label class="checkRow">
+              <input id="setCompact" type="checkbox" />
+              <span>紧凑模式</span>
+            </label>
+          </div>
+
+          <div class="panel">
+            <div class="panelTitle">关于</div>
+            <div class="hint">
+              数据只存在你的浏览器 localStorage。你要换设备或防止丢失，就用“导出 JSON”。
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL -->
+  <div class="modalBackdrop" id="modalBackdrop" hidden>
+    <div class="modal">
+      <div class="modalHeader">
+        <div class="modalTitle" id="modalTitle">标题</div>
+        <button class="iconBtn" id="modalClose" aria-label="Close">✕</button>
+      </div>
+      <div class="modalBody" id="modalBody"></div>
+      <div class="modalFooter" id="modalFooter"></div>
+    </div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
